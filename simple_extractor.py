@@ -89,21 +89,25 @@ def get_palette(num_cls):
 
 
 def main():
-    args = get_arguments()
-
-    gpus = [int(i) for i in args.gpu.split(',')]
+    my_dataset = 'lip'
+    my_model ='checkpoints/final.pth'
+    input_dir = 'inputs'
+    output_dir = 'outputs'
+    gpu_p = '0'
+    logits_f = False
+    gpus = [int(i) for i in gpu_p.split(',')]
     assert len(gpus) == 1
-    if not args.gpu == 'None':
-        os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
+    if not gpu_p == 'None':
+        os.environ["CUDA_VISIBLE_DEVICES"] = gpu_p
 
-    num_classes = dataset_settings[args.dataset]['num_classes']
-    input_size = dataset_settings[args.dataset]['input_size']
-    label = dataset_settings[args.dataset]['label']
+    num_classes = dataset_settings[my_dataset]['num_classes']
+    input_size = dataset_settings[my_dataset]['input_size']
+    label = dataset_settings[my_dataset]['label']
     print("Evaluating total class number {} with {}".format(num_classes, label))
 
     model = networks.init_model('resnet101', num_classes=num_classes, pretrained=None)
 
-    state_dict = torch.load(args.model_restore)['state_dict']
+    state_dict = torch.load(my_model)['state_dict']
     from collections import OrderedDict
     new_state_dict = OrderedDict()
     for k, v in state_dict.items():
@@ -117,11 +121,11 @@ def main():
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.406, 0.456, 0.485], std=[0.225, 0.224, 0.229])
     ])
-    dataset = SimpleFolderDataset(root=args.input_dir, input_size=input_size, transform=transform)
+    dataset = SimpleFolderDataset(root=input_dir, input_size=input_size, transform=transform)
     dataloader = DataLoader(dataset)
 
-    if not os.path.exists(args.output_dir):
-        os.makedirs(args.output_dir)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
     palette = get_palette(num_classes)
     with torch.no_grad():
@@ -141,12 +145,12 @@ def main():
 
             logits_result = transform_logits(upsample_output.data.cpu().numpy(), c, s, w, h, input_size=input_size)
             parsing_result = np.argmax(logits_result, axis=2)
-            parsing_result_path = os.path.join(args.output_dir, img_name[:-4] + '.png')
+            parsing_result_path = os.path.join(output_dir, img_name[:-4] + '.png')
             output_img = Image.fromarray(np.asarray(parsing_result, dtype=np.uint8))
             output_img.putpalette(palette)
             output_img.save(parsing_result_path)
             if args.logits:
-                logits_result_path = os.path.join(args.output_dir, img_name[:-4] + '.npy')
+                logits_result_path = os.path.join(output_dir, img_name[:-4] + '.npy')
                 np.save(logits_result_path, logits_result)
     return
 
