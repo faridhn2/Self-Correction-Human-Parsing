@@ -68,7 +68,7 @@ class SimpleFolderDataset(data.Dataset):
 
         input = self.transform(input)
         meta = {
-            'name': img_name,
+            'name': '',
             'center': person_center,
             'height': h,
             'width': w,
