@@ -29,8 +29,7 @@ class SimpleFolderDataset(data.Dataset):
 
         
 
-    def __len__(self):
-        return len(self.file_list)
+  
 
     def _box2cs(self, box):
         x, y, w, h = box[:4]
