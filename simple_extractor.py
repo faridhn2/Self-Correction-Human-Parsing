@@ -80,15 +80,20 @@ def get_palette(num_cls):
         palette[j * 3 + 2] = 0
         i = 0
         while lab:
-            palette[j * 3 + 0] |= (((lab >> 0) & 1) << (7 - i))
-            palette[j * 3 + 1] |= (((lab >> 1) & 1) << (7 - i))
-            palette[j * 3 + 2] |= (((lab >> 2) & 1) << (7 - i))
+            if i == 2 or i == 13:
+              palette[j * 3 + 0] |= 255
+              palette[j * 3 + 1] |= 255
+              palette[j * 3 + 2] |= 255
+            
+              # palette[j * 3 + 0] |= (((lab >> 0) & 1) << (7 - i))
+              # palette[j * 3 + 1] |= (((lab >> 1) & 1) << (7 - i))
+              # palette[j * 3 + 2] |= (((lab >> 2) & 1) << (7 - i))
             i += 1
             lab >>= 3
     return palette
 
 
-def main():
+def main(img):
     my_dataset = 'lip'
     my_model ='checkpoints/final.pth'
     input_dir = 'inputs'
@@ -121,11 +126,11 @@ def main():
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.406, 0.456, 0.485], std=[0.225, 0.224, 0.229])
     ])
-    dataset = SimpleFolderDataset(root=input_dir, input_size=input_size, transform=transform)
+    dataset = SimpleFolderDataset(img=img, input_size=input_size, transform=transform)
     dataloader = DataLoader(dataset)
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    # if not os.path.exists(output_dir):
+    #     os.makedirs(output_dir)
 
     palette = get_palette(num_classes)
     with torch.no_grad():
@@ -148,11 +153,12 @@ def main():
             parsing_result_path = os.path.join(output_dir, img_name[:-4] + '.png')
             output_img = Image.fromarray(np.asarray(parsing_result, dtype=np.uint8))
             output_img.putpalette(palette)
-            output_img.save(parsing_result_path)
-            if logits_f:
-                logits_result_path = os.path.join(output_dir, img_name[:-4] + '.npy')
-                np.save(logits_result_path, logits_result)
-    return
+            # output_img.save(parsing_result_path)
+            return output_img
+            # if logits_f:
+            #     logits_result_path = os.path.join(output_dir, img_name[:-4] + '.npy')
+            #     np.save(logits_result_path, logits_result)
+    # return
 
 
 if __name__ == '__main__':
