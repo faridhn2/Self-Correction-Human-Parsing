@@ -27,7 +27,7 @@ class SimpleFolderDataset(data.Dataset):
         self.aspect_ratio = input_size[1] * 1.0 / input_size[0]
         self.input_size = np.asarray(input_size)
 
-        # self.file_list = os.listdir(self.root)
+        
 
     def __len__(self):
         return len(self.file_list)
@@ -48,9 +48,9 @@ class SimpleFolderDataset(data.Dataset):
         return center, scale
 
     def __getitem__(self, index):
-        # img_name = self.file_list[index]
-        # img_path = os.path.join(self.root, img_name)
-        # img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+        
+        
+       
         img = self.img
         h, w, _ = img.shape
 
