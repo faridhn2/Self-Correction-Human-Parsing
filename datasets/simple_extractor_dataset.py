@@ -45,7 +45,8 @@ class SimpleFolderDataset(data.Dataset):
             w = h * self.aspect_ratio
         scale = np.array([w, h], dtype=np.float32)
         return center, scale
-
+    def __len__(self):
+      return 1
     def __getitem__(self, index):
         
         
