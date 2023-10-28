@@ -20,8 +20,8 @@ from utils.transforms import get_affine_transform
 
 
 class SimpleFolderDataset(data.Dataset):
-    def __init__(self, root, input_size=[512, 512], transform=None):
-        self.root = root
+    def __init__(self, img, input_size=[512, 512], transform=None):
+        self.img = img
         self.input_size = input_size
         self.transform = transform
         self.aspect_ratio = input_size[1] * 1.0 / input_size[0]
@@ -48,9 +48,10 @@ class SimpleFolderDataset(data.Dataset):
         return center, scale
 
     def __getitem__(self, index):
-        img_name = self.file_list[index]
-        img_path = os.path.join(self.root, img_name)
-        img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+        # img_name = self.file_list[index]
+        # img_path = os.path.join(self.root, img_name)
+        # img = cv2.imread(img_path, cv2.IMREAD_COLOR)
+        img = self.img
         h, w, _ = img.shape
 
         # Get person center and scale
