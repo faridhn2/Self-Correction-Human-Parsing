@@ -149,7 +149,7 @@ def main():
             output_img = Image.fromarray(np.asarray(parsing_result, dtype=np.uint8))
             output_img.putpalette(palette)
             output_img.save(parsing_result_path)
-            if args.logits:
+            if logits_f:
                 logits_result_path = os.path.join(output_dir, img_name[:-4] + '.npy')
                 np.save(logits_result_path, logits_result)
     return
